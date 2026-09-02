@@ -59,7 +59,3 @@ API 문서: http://localhost:8080/swagger-ui.html
 | --- | --- |
 | jongheecode | Backend |
 |  | Frontend, Design |
-
-## 컨벤션
-
-브랜치, 커밋, 코드 컨벤션은 CLAUDE.md를 참고하세요.
