@@ -62,4 +62,4 @@ API 문서: http://localhost:8080/swagger-ui.html
 | 이름 | 역할 |
 | --- | --- |
 | jongheecode | Backend |
-|  | Frontend, Design |
+|  | Frontend |
