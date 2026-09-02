@@ -1,19 +1,7 @@
 # ONTI API
 
-> 당신의 이야기를 ON.
-
-흩어진 기록과 생각이 연결되고 정리되어 한 권의 이야기로 완성되는
-기록·출판 플랫폼 ONTI의 백엔드 API 서버입니다.
-
-## 왜 만드나
-
-기록하는 일은 어렵지 않지만, 쌓인 기록을 정리해 하나의 결과물로
-완성하는 일은 늘 막막합니다. ONTI는 그 과정을 함께 정리하고
-완성까지 이끕니다.
-
-## 서비스 흐름
-
-기록 모으기 → 구조 만들기 → 집필하기 → 점검하기 → 책 디자인 → 완성
+기록·출판 플랫폼 [ONTI](https://github.com/Bs-Bowl)의 백엔드 API 서버입니다.
+프로젝트 전체 소개는 [Bs-Bowl/.github](https://github.com/Bs-Bowl/.github)를 참고하세요.
 
 ## 기술 스택
 
@@ -26,6 +14,22 @@
 | Auth | Spring Security, JWT |
 | Docs | springdoc-openapi |
 | Build | Gradle |
+
+## 패키지 구조
+
+도메인형으로 구성합니다.
+
+com.bsbowl.onti
+├── domain
+│   ├── user      # 회원, 인증
+│   ├── book      # 책 프로젝트
+│   ├── record    # 기록 (메모/글/사진)
+│   ├── chapter   # 챕터, 목차
+│   └── ai        # 목차 제안, 점검
+└── global
+    ├── config    # CORS, Security, Swagger
+    ├── exception
+    └── common    # 공통 응답 포맷, BaseEntity
 
 ## 실행 방법
 
