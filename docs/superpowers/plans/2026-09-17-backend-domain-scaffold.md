@@ -232,7 +232,7 @@ git commit -m "chore: Gradle/Spring Boot 프로젝트 스캐폴딩"
 
 **Interfaces:**
 - Consumes: Task 1의 Spring Boot 프로젝트 골격
-- Produces: `BaseEntity`(id/createdAt/updatedAt, 이후 모든 엔티티가 상속), `ApiResponse<T>.success(T)` / `ApiResponse.success()` / `ApiResponse.error(ErrorCode)`, `ErrorCode` enum(모든 도메인이 여기에 코드 추가), `CustomException(ErrorCode)`, `GlobalExceptionHandler`
+- Produces: `BaseEntity`(id/createdAt/updatedAt, 이후 모든 엔티티가 상속), `ApiResponse<T>.success(T data)` / `ApiResponse.error(ErrorCode)`, `ErrorCode` enum(모든 도메인이 여기에 코드 추가), `CustomException(ErrorCode)`, `GlobalExceptionHandler`. 본문 없는 성공 응답은 `ApiResponse.success(null)`로 표현한다 (레코드 컴포넌트 `success()`와 이름이 충돌해 정적 무인자 오버로드를 만들 수 없음 — Task 2 구현 중 발견).
 
 - [ ] **Step 1: BaseEntity 작성**
 
@@ -365,10 +365,6 @@ public record ApiResponse<T>(boolean success, T data, ErrorResponse error) {
 
     public static <T> ApiResponse<T> success(T data) {
         return new ApiResponse<>(true, data, null);
-    }
-
-    public static ApiResponse<Void> success() {
-        return new ApiResponse<>(true, null, null);
     }
 
     public static ApiResponse<Void> error(ErrorCode errorCode) {
@@ -1552,7 +1548,7 @@ public class BookController {
     public ResponseEntity<ApiResponse<Void>> delete(@AuthenticationPrincipal String userId,
                                                       @PathVariable String bookId) {
         bookService.delete(bookId, userId);
-        return ResponseEntity.ok(ApiResponse.success());
+        return ResponseEntity.ok(ApiResponse.success(null));
     }
 }
 ```
@@ -2461,7 +2457,7 @@ public class ChapterController {
     public ResponseEntity<ApiResponse<Void>> delete(@AuthenticationPrincipal String userId,
                                                       @PathVariable String chapterId) {
         chapterService.delete(chapterId, userId);
-        return ResponseEntity.ok(ApiResponse.success());
+        return ResponseEntity.ok(ApiResponse.success(null));
     }
 }
 ```
@@ -2521,7 +2517,7 @@ public class SectionController {
     public ResponseEntity<ApiResponse<Void>> delete(@AuthenticationPrincipal String userId,
                                                       @PathVariable String sectionId) {
         sectionService.delete(sectionId, userId);
-        return ResponseEntity.ok(ApiResponse.success());
+        return ResponseEntity.ok(ApiResponse.success(null));
     }
 }
 ```
@@ -2982,7 +2978,7 @@ public class RecordController {
     public ResponseEntity<ApiResponse<Void>> delete(@AuthenticationPrincipal String userId,
                                                       @PathVariable String recordId) {
         recordService.delete(recordId, userId);
-        return ResponseEntity.ok(ApiResponse.success());
+        return ResponseEntity.ok(ApiResponse.success(null));
     }
 }
 ```
