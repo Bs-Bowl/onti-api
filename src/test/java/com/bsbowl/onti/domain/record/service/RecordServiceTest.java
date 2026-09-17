@@ -68,6 +68,8 @@ class RecordServiceTest {
         User user = User.builder().email("a@onti.com").password("x").name("a").build();
         Book book = Book.builder().user(user).title("책").build();
         Record record = Record.builder().book(book).type(RecordType.MEMO).content("메모").order(0).build();
+        Chapter chapter = Chapter.builder().book(book).title("챕터").order(0).build();
+        ReflectionTestUtils.setField(record, "chapter", chapter);
         when(recordRepository.findById("record-1")).thenReturn(Optional.of(record));
         when(bookService.getOwnedBook(any(), any())).thenReturn(book);
 
