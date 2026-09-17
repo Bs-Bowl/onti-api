@@ -45,7 +45,7 @@ public class Record extends BaseEntity {
 
     private LocalDateTime recordedAt;
 
-    @Column(nullable = false)
+    @Column(name = "sort_order", nullable = false)
     private int order;
 
     @Builder
