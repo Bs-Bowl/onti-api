@@ -52,7 +52,7 @@ public class SectionService {
         sectionRepository.delete(getOwnedSection(sectionId, userId));
     }
 
-    private Section getOwnedSection(String sectionId, String userId) {
+    public Section getOwnedSection(String sectionId, String userId) {
         Section section = sectionRepository.findById(sectionId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SECTION_NOT_FOUND));
         chapterService.getOwnedChapter(section.getChapter().getId(), userId);

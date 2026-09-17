@@ -33,6 +33,7 @@ public class RecordService {
     @Transactional
     public RecordResponse create(String bookId, String userId, RecordCreateRequest request) {
         Book book = bookService.getOwnedBook(bookId, userId);
+        int nextOrder = recordRepository.findAllByBookIdOrderByOrderAsc(bookId).size();
         Record record = Record.builder()
                 .book(book)
                 .type(request.type())
@@ -40,7 +41,7 @@ public class RecordService {
                 .mediaUrl(request.mediaUrl())
                 .memo(request.memo())
                 .recordedAt(request.recordedAt())
-                .order(0)
+                .order(nextOrder)
                 .build();
         return RecordResponse.from(recordRepository.save(record));
     }
