@@ -2727,6 +2727,7 @@ package com.bsbowl.onti.domain.record.service;
 
 import com.bsbowl.onti.domain.book.entity.Book;
 import com.bsbowl.onti.domain.book.service.BookService;
+import com.bsbowl.onti.domain.chapter.entity.Chapter;
 import com.bsbowl.onti.domain.chapter.repository.ChapterRepository;
 import com.bsbowl.onti.domain.record.dto.RecordCreateRequest;
 import com.bsbowl.onti.domain.record.dto.RecordUpdateRequest;
@@ -2741,6 +2742,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
 
@@ -2798,6 +2800,26 @@ class RecordServiceTest {
                 new RecordUpdateRequest(null, null, null, null, null, null, true));
 
         assertThat(response.chapterId()).isNull();
+    }
+
+    @Test
+    void update_linkingChapterFromDifferentBook_throwsChapterNotFound() {
+        User user = User.builder().email("a@onti.com").password("x").name("a").build();
+        Book recordBook = Book.builder().user(user).title("내 책").build();
+        ReflectionTestUtils.setField(recordBook, "id", "book-1");
+        Book otherBook = Book.builder().user(user).title("다른 책").build();
+        ReflectionTestUtils.setField(otherBook, "id", "book-2");
+        Record record = Record.builder().book(recordBook).type(RecordType.MEMO).content("메모").order(0).build();
+        Chapter foreignChapter = Chapter.builder().book(otherBook).title("남의 챕터").order(0).build();
+        when(recordRepository.findById("record-1")).thenReturn(Optional.of(record));
+        when(bookService.getOwnedBook(any(), any())).thenReturn(recordBook);
+        when(chapterRepository.findById("chapter-2")).thenReturn(Optional.of(foreignChapter));
+
+        assertThatThrownBy(() -> recordService.update("record-1", "user-1",
+                new RecordUpdateRequest(null, null, null, null, null, "chapter-2", false)))
+                .isInstanceOf(CustomException.class)
+                .extracting("errorCode")
+                .isEqualTo(ErrorCode.CHAPTER_NOT_FOUND);
     }
 }
 ```
@@ -2875,6 +2897,9 @@ public class RecordService {
         } else if (request.chapterId() != null) {
             Chapter chapter = chapterRepository.findById(request.chapterId())
                     .orElseThrow(() -> new CustomException(ErrorCode.CHAPTER_NOT_FOUND));
+            if (!chapter.getBook().getId().equals(record.getBook().getId())) {
+                throw new CustomException(ErrorCode.CHAPTER_NOT_FOUND);
+            }
             record.linkChapter(chapter);
         }
         return RecordResponse.from(record);
@@ -2897,7 +2922,7 @@ public class RecordService {
 - [ ] **Step 6: 테스트 통과 확인**
 
 Run: `./gradlew test --tests "com.bsbowl.onti.domain.record.service.RecordServiceTest"`
-Expected: `BUILD SUCCESSFUL`, 3개 테스트 통과
+Expected: `BUILD SUCCESSFUL`, 4개 테스트 통과
 
 - [ ] **Step 7: RecordController 구현**
 
@@ -3096,7 +3121,7 @@ git commit -m "feat: AI 제안/점검 스텁 API 추가"
 - [ ] **Step 1: 전체 단위 테스트 실행**
 
 Run: `./gradlew test`
-Expected: `BUILD SUCCESSFUL`, Task 2~8에서 작성한 모든 서비스 테스트 통과 (총 17개: ApiResponseTest 2 + GlobalExceptionHandlerTest 2 + JwtTokenProviderTest 3 + AuthServiceTest 3 + BookServiceTest 3 + BookDesignServiceTest 2 + ChapterServiceTest 2 + SectionServiceTest 2 + RecordServiceTest 3, 정확한 개수는 실행 결과로 확인)
+Expected: `BUILD SUCCESSFUL`, Task 2~8에서 작성한 모든 서비스 테스트 통과 (총 18개: ApiResponseTest 2 + GlobalExceptionHandlerTest 2 + JwtTokenProviderTest 3 + AuthServiceTest 3 + BookServiceTest 3 + BookDesignServiceTest 2 + ChapterServiceTest 2 + SectionServiceTest 2 + RecordServiceTest 4, 정확한 개수는 실행 결과로 확인)
 
 - [ ] **Step 2: PostgreSQL 기동**
 
