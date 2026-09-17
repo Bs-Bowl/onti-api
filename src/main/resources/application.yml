@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: onti-api
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/onti
+    username: onti
+    password: onti
+
+jwt:
+  secret: ${JWT_SECRET:local-dev-secret-key-please-change-before-prod-1234567890}
+  expiration-ms: 86400000
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

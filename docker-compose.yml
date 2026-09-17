@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: onti-postgres
+    environment:
+      POSTGRES_DB: onti
+      POSTGRES_USER: onti
+      POSTGRES_PASSWORD: onti
+    ports:
+      - "5432:5432"
+    volumes:
+      - onti-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  onti-postgres-data:

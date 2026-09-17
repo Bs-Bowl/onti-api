@@ -26,3 +26,20 @@ replay_pid*
 # Claude
 CLAUDE.md
 .superpowers/
+
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Spring Boot
+HELP.md
+
+# Secrets
+application-local.yml
+.env
