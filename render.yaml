@@ -4,7 +4,9 @@ services:
     runtime: docker
     dockerfilePath: ./Dockerfile
     plan: free
-    healthCheckPath: /api/auth/login
+    # /api/auth/login은 POST 전용이라 헬스체크(GET)가 절대 통과 못 함 - v3/api-docs는
+    # 인증 없이 GET으로 항상 200 나오는 경로라 헬스체크로 씀.
+    healthCheckPath: /v3/api-docs
     envVars:
       - key: DB_HOST
         fromDatabase:
