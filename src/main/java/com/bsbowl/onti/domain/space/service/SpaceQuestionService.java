@@ -39,6 +39,7 @@ public class SpaceQuestionService {
         if (!createdBy.getSpace().getId().equals(spaceId)) {
             throw new CustomException(ErrorCode.PARTICIPANT_NOT_FOUND);
         }
+        validateParticipantIdsInSpace(request.sentToParticipantIds(), spaceId);
         SpaceQuestion question = SpaceQuestion.builder()
                 .space(space)
                 .text(request.text())
@@ -59,6 +60,9 @@ public class SpaceQuestionService {
     @Transactional
     public SpaceQuestionResponse update(String questionId, String userId, SpaceQuestionUpdateRequest request) {
         SpaceQuestion question = getOwnedQuestion(questionId, userId);
+        if (request.sentToParticipantIds() != null) {
+            validateParticipantIdsInSpace(request.sentToParticipantIds(), question.getSpace().getId());
+        }
         question.update(request.text(), request.sentToParticipantIds());
         return SpaceQuestionResponse.from(question);
     }
@@ -73,5 +77,18 @@ public class SpaceQuestionService {
                 .orElseThrow(() -> new CustomException(ErrorCode.SPACE_QUESTION_NOT_FOUND));
         spaceService.getOwnedSpace(question.getSpace().getId(), userId);
         return question;
+    }
+
+    private void validateParticipantIdsInSpace(List<String> participantIds, String spaceId) {
+        if (participantIds == null) {
+            return;
+        }
+        for (String participantId : participantIds) {
+            Participant participant = participantRepository.findById(participantId)
+                    .orElseThrow(() -> new CustomException(ErrorCode.PARTICIPANT_NOT_FOUND));
+            if (!participant.getSpace().getId().equals(spaceId)) {
+                throw new CustomException(ErrorCode.PARTICIPANT_NOT_FOUND);
+            }
+        }
     }
 }

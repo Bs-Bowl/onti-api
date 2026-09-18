@@ -70,4 +70,24 @@ class SpaceQuestionServiceTest {
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.PARTICIPANT_NOT_FOUND);
     }
+
+    @Test
+    void create_sentToParticipantIdsIncludesForeignParticipant_throwsParticipantNotFound() {
+        User user = User.builder().email("a@onti.com").password("x").name("a").build();
+        RecordSpace space = RecordSpace.builder().owner(user).title("공간").build();
+        ReflectionTestUtils.setField(space, "id", "space-1");
+        RecordSpace otherSpace = RecordSpace.builder().owner(user).title("다른 공간").build();
+        ReflectionTestUtils.setField(otherSpace, "id", "space-2");
+        Participant createdBy = Participant.builder().space(space).displayName("엄마").email("mom@onti.com").build();
+        Participant foreignParticipant = Participant.builder().space(otherSpace).displayName("남").email("x@onti.com").build();
+        when(spaceService.getOwnedSpace("space-1", "user-1")).thenReturn(space);
+        when(participantRepository.findById("participant-1")).thenReturn(Optional.of(createdBy));
+        when(participantRepository.findById("participant-2")).thenReturn(Optional.of(foreignParticipant));
+
+        assertThatThrownBy(() -> spaceQuestionService.create("space-1", "user-1",
+                new SpaceQuestionCreateRequest("질문", "participant-1", List.of("participant-2"))))
+                .isInstanceOf(CustomException.class)
+                .extracting("errorCode")
+                .isEqualTo(ErrorCode.PARTICIPANT_NOT_FOUND);
+    }
 }
