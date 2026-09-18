@@ -19,6 +19,10 @@ spring:
       max-request-size: 50MB
 
 onti:
+  cors:
+    # 브라우저에서 이 API를 부를 수 있는 출처. 쉼표로 구분하며 와일드카드를 쓸
+    # 수 있다(*.vercel.app은 preview 배포마다 주소가 바뀌어서 필요하다).
+    allowed-origins: ${ONTI_CORS_ORIGINS:http://localhost:3000,https://onti-blue.vercel.app,https://*.vercel.app}
   upload:
     # 서버 로컬 디스크에 저장한다 — 운영에서는 S3로 교체 예정.
     dir: ${ONTI_UPLOAD_DIR:uploads}

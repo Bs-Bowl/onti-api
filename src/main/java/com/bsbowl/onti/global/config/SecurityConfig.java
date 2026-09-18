@@ -3,6 +3,7 @@ package com.bsbowl.onti.global.config;
 import com.bsbowl.onti.global.config.security.JwtAuthenticationFilter;
 import com.bsbowl.onti.global.config.security.JwtTokenProvider;
 import com.bsbowl.onti.global.config.security.RestAuthenticationEntryPoint;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -23,10 +24,14 @@ public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
+    private final String[] allowedOrigins;
 
-    public SecurityConfig(JwtTokenProvider jwtTokenProvider, RestAuthenticationEntryPoint restAuthenticationEntryPoint) {
+    public SecurityConfig(JwtTokenProvider jwtTokenProvider,
+                          RestAuthenticationEntryPoint restAuthenticationEntryPoint,
+                          @Value("${onti.cors.allowed-origins}") String[] allowedOrigins) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
+        this.allowedOrigins = allowedOrigins;
     }
 
     @Bean
@@ -54,13 +59,26 @@ public class SecurityConfig {
     }
 
     private CorsConfigurationSource corsConfigurationSource() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfiguration(List.of(allowedOrigins)));
+        return source;
+    }
+
+    /**
+     * 브라우저에서 이 API를 부를 수 있는 출처 목록. 로컬 개발 주소만 하드코딩해
+     * 두면 배포된 프론트엔드나 터널 주소에서 부를 수 없어, 환경변수
+     * (ONTI_CORS_ORIGINS)로 바꿀 수 있게 열어둔다.
+     * <p>
+     * setAllowedOrigins가 아니라 setAllowedOriginPatterns를 쓰는 이유는
+     * {@code https://*.vercel.app}처럼 배포마다 앞부분이 바뀌는 주소를 한 줄로
+     * 허용할 수 있어야 하기 때문이다(정확한 주소를 그대로 넣어도 동작한다).
+     */
+    static CorsConfiguration corsConfiguration(List<String> originPatterns) {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        configuration.setAllowedOriginPatterns(originPatterns);
         configuration.setAllowedMethods(List.of("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
+        return configuration;
     }
 }
