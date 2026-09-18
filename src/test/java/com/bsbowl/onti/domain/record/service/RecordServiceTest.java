@@ -6,6 +6,7 @@ import com.bsbowl.onti.domain.chapter.entity.Chapter;
 import com.bsbowl.onti.domain.chapter.repository.ChapterRepository;
 import com.bsbowl.onti.domain.record.dto.RecordCreateRequest;
 import com.bsbowl.onti.domain.record.dto.RecordImageCreateRequest;
+import com.bsbowl.onti.domain.record.dto.RecordImageUpdateRequest;
 import com.bsbowl.onti.domain.record.dto.RecordUpdateRequest;
 import com.bsbowl.onti.domain.record.entity.Record;
 import com.bsbowl.onti.domain.record.entity.RecordImage;
@@ -124,6 +125,44 @@ class RecordServiceTest {
 
         assertThat(response.order()).isEqualTo(0);
         assertThat(response.url()).isEqualTo("https://example.com/a.jpg");
+    }
+
+    @Test
+    void updateImage_changesCaptionAndOrder() {
+        User user = User.builder().email("a@onti.com").password("x").name("a").build();
+        Book book = Book.builder().user(user).title("책").build();
+        Record record = Record.builder().book(book).type(RecordType.PHOTO).order(0).build();
+        ReflectionTestUtils.setField(record, "id", "record-1");
+        RecordImage image = RecordImage.builder().record(record).url("https://x").caption("이전").order(0).build();
+        when(recordRepository.findById("record-1")).thenReturn(Optional.of(record));
+        when(bookService.getOwnedBook(any(), any())).thenReturn(book);
+        when(recordImageRepository.findById("image-1")).thenReturn(Optional.of(image));
+
+        var response = recordService.updateImage("record-1", "image-1", "user-1",
+                new RecordImageUpdateRequest("새 설명", 2));
+
+        assertThat(response.caption()).isEqualTo("새 설명");
+        assertThat(response.order()).isEqualTo(2);
+    }
+
+    @Test
+    void updateImage_imageFromDifferentRecord_throwsImageNotFound() {
+        User user = User.builder().email("a@onti.com").password("x").name("a").build();
+        Book book = Book.builder().user(user).title("책").build();
+        Record record = Record.builder().book(book).type(RecordType.PHOTO).order(0).build();
+        Record otherRecord = Record.builder().book(book).type(RecordType.PHOTO).order(0).build();
+        ReflectionTestUtils.setField(record, "id", "record-1");
+        ReflectionTestUtils.setField(otherRecord, "id", "record-2");
+        RecordImage foreignImage = RecordImage.builder().record(otherRecord).url("https://x").order(0).build();
+        when(recordRepository.findById("record-1")).thenReturn(Optional.of(record));
+        when(bookService.getOwnedBook(any(), any())).thenReturn(book);
+        when(recordImageRepository.findById("image-2")).thenReturn(Optional.of(foreignImage));
+
+        assertThatThrownBy(() -> recordService.updateImage("record-1", "image-2", "user-1",
+                new RecordImageUpdateRequest("x", null)))
+                .isInstanceOf(CustomException.class)
+                .extracting("errorCode")
+                .isEqualTo(ErrorCode.RECORD_IMAGE_NOT_FOUND);
     }
 
     @Test

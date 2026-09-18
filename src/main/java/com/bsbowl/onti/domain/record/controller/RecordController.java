@@ -3,6 +3,7 @@ package com.bsbowl.onti.domain.record.controller;
 import com.bsbowl.onti.domain.record.dto.RecordCreateRequest;
 import com.bsbowl.onti.domain.record.dto.RecordImageCreateRequest;
 import com.bsbowl.onti.domain.record.dto.RecordImageResponse;
+import com.bsbowl.onti.domain.record.dto.RecordImageUpdateRequest;
 import com.bsbowl.onti.domain.record.dto.RecordResponse;
 import com.bsbowl.onti.domain.record.dto.RecordUpdateRequest;
 import com.bsbowl.onti.domain.record.service.RecordService;
@@ -61,6 +62,14 @@ public class RecordController {
                                                                        @PathVariable String recordId,
                                                                        @Valid @RequestBody RecordImageCreateRequest request) {
         return ResponseEntity.ok(ApiResponse.success(recordService.addImage(recordId, userId, request)));
+    }
+
+    @PatchMapping("/api/records/{recordId}/images/{imageId}")
+    public ResponseEntity<ApiResponse<RecordImageResponse>> updateImage(@AuthenticationPrincipal String userId,
+                                                                          @PathVariable String recordId,
+                                                                          @PathVariable String imageId,
+                                                                          @RequestBody RecordImageUpdateRequest request) {
+        return ResponseEntity.ok(ApiResponse.success(recordService.updateImage(recordId, imageId, userId, request)));
     }
 
     @DeleteMapping("/api/records/{recordId}/images/{imageId}")

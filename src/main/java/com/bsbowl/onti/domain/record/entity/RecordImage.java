@@ -40,4 +40,9 @@ public class RecordImage extends BaseEntity {
         this.caption = caption;
         this.order = order;
     }
+
+    public void update(String caption, Integer order) {
+        if (caption != null) this.caption = caption;
+        if (order != null) this.order = order;
+    }
 }
