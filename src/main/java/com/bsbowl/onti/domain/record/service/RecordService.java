@@ -7,6 +7,7 @@ import com.bsbowl.onti.domain.chapter.repository.ChapterRepository;
 import com.bsbowl.onti.domain.record.dto.RecordCreateRequest;
 import com.bsbowl.onti.domain.record.dto.RecordImageCreateRequest;
 import com.bsbowl.onti.domain.record.dto.RecordImageResponse;
+import com.bsbowl.onti.domain.record.dto.RecordImageUpdateRequest;
 import com.bsbowl.onti.domain.record.dto.RecordResponse;
 import com.bsbowl.onti.domain.record.dto.RecordUpdateRequest;
 import com.bsbowl.onti.domain.record.entity.Record;
@@ -98,14 +99,27 @@ public class RecordService {
     }
 
     @Transactional
+    public RecordImageResponse updateImage(String recordId, String imageId, String userId, RecordImageUpdateRequest request) {
+        getOwnedRecord(recordId, userId);
+        RecordImage image = getOwnedImage(recordId, imageId);
+        image.update(request.caption(), request.order());
+        return RecordImageResponse.from(image);
+    }
+
+    @Transactional
     public void deleteImage(String recordId, String imageId, String userId) {
         getOwnedRecord(recordId, userId);
+        RecordImage image = getOwnedImage(recordId, imageId);
+        recordImageRepository.delete(image);
+    }
+
+    private RecordImage getOwnedImage(String recordId, String imageId) {
         RecordImage image = recordImageRepository.findById(imageId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RECORD_IMAGE_NOT_FOUND));
         if (!image.getRecord().getId().equals(recordId)) {
             throw new CustomException(ErrorCode.RECORD_IMAGE_NOT_FOUND);
         }
-        recordImageRepository.delete(image);
+        return image;
     }
 
     private Record getOwnedRecord(String recordId, String userId) {
