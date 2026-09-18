@@ -1,0 +1,13 @@
+# 이미지에 넣을 필요가 없는 것들. 빌드 컨텍스트를 작게 유지해 배포를 빠르게 한다.
+.git
+.gradle
+build
+.idea
+*.iml
+*.log
+uploads/
+.claude/
+.superpowers/
+docs/
+README.md
+CLAUDE.md

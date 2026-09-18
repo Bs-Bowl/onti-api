@@ -1,3 +1,8 @@
+server:
+  # 배포 플랫폼(Railway/Render 등)은 실행할 때 PORT로 포트를 지정한다. 이 값을
+  # 따르지 않으면 플랫폼이 앱을 못 찾아 배포가 실패한다.
+  port: ${PORT:8080}
+
 spring:
   application:
     name: onti-api

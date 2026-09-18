@@ -1,0 +1,9 @@
+# Gradle wrapper 스크립트는 반드시 LF로 체크아웃돼야 한다. Windows에서
+# CRLF로 받으면 셔뱅(#!/bin/sh)이 "\r"까지 이름으로 읽혀서, 리눅스 컨테이너
+# 안에서 "./gradlew: not found"로 빌드가 실패한다(Dockerfile 빌드가 이걸로
+# 한 번 깨졌다).
+gradlew text eol=lf
+*.sh text eol=lf
+
+# 반대로 Windows 배치 파일은 CRLF여야 한다.
+gradlew.bat text eol=crlf
