@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: onti-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /api/auth/login
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: onti-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: onti-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: onti-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: onti-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: onti-db
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ONTI_CORS_ORIGINS
+        value: http://localhost:3000,https://onti-blue.vercel.app,https://*.vercel.app
+
+databases:
+  - name: onti-db
+    plan: free
+    databaseName: onti
+    user: onti
