@@ -25,10 +25,23 @@ public class User extends BaseEntity {
 
     private String avatarUrl;
 
+    @Column(length = 500)
+    private String bio;
+
     @Builder
     private User(String email, String password, String name) {
         this.email = email;
         this.password = password;
         this.name = name;
+    }
+
+    public void updateProfile(String name, String avatarUrl, String bio) {
+        if (name != null) this.name = name;
+        if (avatarUrl != null) this.avatarUrl = avatarUrl;
+        if (bio != null) this.bio = bio;
+    }
+
+    public void changePassword(String newEncodedPassword) {
+        this.password = newEncodedPassword;
     }
 }
