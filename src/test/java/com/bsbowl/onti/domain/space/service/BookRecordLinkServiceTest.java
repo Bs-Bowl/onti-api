@@ -79,4 +79,22 @@ class BookRecordLinkServiceTest {
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.CHAPTER_NOT_FOUND);
     }
+
+    @Test
+    void create_duplicateRecordInSameBook_throwsAlreadyExists() {
+        User user = User.builder().email("a@onti.com").password("x").name("a").build();
+        Book book = Book.builder().user(user).title("책").build();
+        RecordSpace space = RecordSpace.builder().owner(user).title("공간").build();
+        SpaceRecord record = SpaceRecord.builder().space(space).type(RecordType.TEXT).build();
+        ReflectionTestUtils.setField(record, "id", "record-1");
+        when(bookService.getOwnedBook("book-1", "user-1")).thenReturn(book);
+        when(spaceRecordService.getOwnedSpaceRecord("record-1", "user-1")).thenReturn(record);
+        when(bookRecordLinkRepository.existsByBookIdAndSpaceRecordId("book-1", "record-1")).thenReturn(true);
+
+        assertThatThrownBy(() -> bookRecordLinkService.create("book-1", "user-1",
+                new BookRecordLinkCreateRequest("record-1", null)))
+                .isInstanceOf(CustomException.class)
+                .extracting("errorCode")
+                .isEqualTo(ErrorCode.BOOK_RECORD_LINK_ALREADY_EXISTS);
+    }
 }

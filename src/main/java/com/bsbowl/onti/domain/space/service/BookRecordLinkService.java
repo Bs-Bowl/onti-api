@@ -37,6 +37,9 @@ public class BookRecordLinkService {
     public BookRecordLinkResponse create(String bookId, String userId, BookRecordLinkCreateRequest request) {
         Book book = bookService.getOwnedBook(bookId, userId);
         SpaceRecord spaceRecord = spaceRecordService.getOwnedSpaceRecord(request.spaceRecordId(), userId);
+        if (bookRecordLinkRepository.existsByBookIdAndSpaceRecordId(bookId, spaceRecord.getId())) {
+            throw new CustomException(ErrorCode.BOOK_RECORD_LINK_ALREADY_EXISTS);
+        }
         Chapter chapter = null;
         if (request.chapterId() != null) {
             chapter = chapterRepository.findById(request.chapterId())

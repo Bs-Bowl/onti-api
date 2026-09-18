@@ -26,6 +26,7 @@ public enum ErrorCode {
     SPACE_RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "기록을 찾을 수 없습니다."),
     SPACE_RECORD_IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "이미지를 찾을 수 없습니다."),
     BOOK_RECORD_LINK_NOT_FOUND(HttpStatus.NOT_FOUND, "연결된 기록을 찾을 수 없습니다."),
+    BOOK_RECORD_LINK_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 이 책에 연결된 기록입니다."),
     INVALID_CURRENT_PASSWORD(HttpStatus.BAD_REQUEST, "현재 비밀번호가 올바르지 않습니다.");
 
     private final HttpStatus status;

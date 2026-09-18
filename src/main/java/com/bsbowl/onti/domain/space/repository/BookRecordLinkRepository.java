@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface BookRecordLinkRepository extends JpaRepository<BookRecordLink, String> {
     List<BookRecordLink> findAllByBookIdOrderByOrderAsc(String bookId);
+
+    boolean existsByBookIdAndSpaceRecordId(String bookId, String spaceRecordId);
 }
