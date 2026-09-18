@@ -183,13 +183,16 @@ Task 10에서 도입한 `@OnDelete` 패턴을 그대로 따른다.
 - `SpaceRecord` 삭제 → `SpaceRecordImage` CASCADE, `BookRecordLink` CASCADE
 - `SpaceQuestion` 삭제 → `SpaceRecord.answeredQuestion` SET_NULL (질문이
   없어져도 기록 자체는 남아야 함)
-- `Book`/`Chapter` 삭제 → `BookRecordLink` CASCADE (기존 Book/Chapter의
-  `@OnDelete` 대상에 `BookRecordLink`를 추가해야 함 — Book/Chapter 엔티티
-  수정 필요)
-- `User` 탈퇴 → `RecordSpace`(소유한 것) CASCADE, 기존 `Book` CASCADE도 이미
-  있어야 하는데 없다면 이번에 추가 (User 삭제 cascade는 이전 라운드에서
-  다루지 않았음 — 이번에 `User` → `Book`, `User` → `RecordSpace` 둘 다
-  `@OnDelete(CASCADE)` 추가)
+- `Book`/`Chapter` 삭제 → `BookRecordLink` CASCADE. `@OnDelete`는 항상
+  FK를 들고 있는 자식 쪽(`BookRecordLink.book`/`BookRecordLink.chapter`)에
+  붙이므로, 기존 `Book`/`Chapter` 엔티티는 수정할 필요가 없다 — `BookRecordLink`를
+  새로 만들 때 그 두 필드에만 붙이면 된다.
+- `User` 탈퇴 → 소유한 `Book`, `RecordSpace` 모두 CASCADE. 이전 라운드(Task 10)의
+  cascade 작업은 Book/Chapter/Record/Section/BookDesign 사이의 관계만
+  다뤘고 `User` → `Book`은 다루지 않았다 — 이번에 기존 `Book.java`의
+  `user` 필드(`@JoinColumn(name = "user_id")`)에 `@OnDelete(action = OnDeleteAction.CASCADE)`를
+  추가해야 한다 (기존 엔티티를 수정하는 유일한 지점). `User` → `RecordSpace`는
+  `RecordSpace.owner` 필드에 새로 붙이면 된다.
 
 ## 테스트
 
