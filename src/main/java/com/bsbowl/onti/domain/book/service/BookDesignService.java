@@ -33,7 +33,7 @@ public class BookDesignService {
         BookDesign design = bookDesignRepository.findByBookId(bookId)
                 .orElseGet(() -> bookDesignRepository.save(BookDesign.builder().book(book).build()));
         design.update(request.coverTemplate(), request.coverColor(), request.coverImageUrl(),
-                request.fontFamily(), request.layoutPreset());
+                request.fontFamily(), request.layoutPreset(), request.designJson());
         return BookDesignResponse.from(design);
     }
 }
