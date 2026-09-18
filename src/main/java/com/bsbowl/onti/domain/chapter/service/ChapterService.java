@@ -44,7 +44,7 @@ public class ChapterService {
     @Transactional
     public ChapterResponse update(String chapterId, String userId, ChapterUpdateRequest request) {
         Chapter chapter = getOwnedChapter(chapterId, userId);
-        chapter.update(request.title(), request.order());
+        chapter.update(request.title(), request.note(), request.order());
         return ChapterResponse.from(chapter);
     }
 

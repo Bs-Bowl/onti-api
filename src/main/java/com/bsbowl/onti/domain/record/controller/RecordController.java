@@ -1,6 +1,8 @@
 package com.bsbowl.onti.domain.record.controller;
 
 import com.bsbowl.onti.domain.record.dto.RecordCreateRequest;
+import com.bsbowl.onti.domain.record.dto.RecordImageCreateRequest;
+import com.bsbowl.onti.domain.record.dto.RecordImageResponse;
 import com.bsbowl.onti.domain.record.dto.RecordResponse;
 import com.bsbowl.onti.domain.record.dto.RecordUpdateRequest;
 import com.bsbowl.onti.domain.record.service.RecordService;
@@ -51,6 +53,21 @@ public class RecordController {
     public ResponseEntity<ApiResponse<Void>> delete(@AuthenticationPrincipal String userId,
                                                       @PathVariable String recordId) {
         recordService.delete(recordId, userId);
+        return ResponseEntity.ok(ApiResponse.success(null));
+    }
+
+    @PostMapping("/api/records/{recordId}/images")
+    public ResponseEntity<ApiResponse<RecordImageResponse>> addImage(@AuthenticationPrincipal String userId,
+                                                                       @PathVariable String recordId,
+                                                                       @Valid @RequestBody RecordImageCreateRequest request) {
+        return ResponseEntity.ok(ApiResponse.success(recordService.addImage(recordId, userId, request)));
+    }
+
+    @DeleteMapping("/api/records/{recordId}/images/{imageId}")
+    public ResponseEntity<ApiResponse<Void>> deleteImage(@AuthenticationPrincipal String userId,
+                                                           @PathVariable String recordId,
+                                                           @PathVariable String imageId) {
+        recordService.deleteImage(recordId, imageId, userId);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 }

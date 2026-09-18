@@ -1,6 +1,5 @@
-package com.bsbowl.onti.domain.chapter.entity;
+package com.bsbowl.onti.domain.record.entity;
 
-import com.bsbowl.onti.domain.book.entity.Book;
 import com.bsbowl.onti.global.common.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,35 +16,28 @@ import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
 @Entity
-@Table(name = "chapters")
+@Table(name = "record_images")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Chapter extends BaseEntity {
+public class RecordImage extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "book_id", nullable = false)
+    @JoinColumn(name = "record_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Book book;
+    private Record record;
 
     @Column(nullable = false)
-    private String title;
+    private String url;
 
-    /** STRUCTURE 화면에서 "이 챕터에서 쓰고 싶은 이야기"로 남기는 짧은 메모. */
-    @Column(length = 1000)
-    private String note;
+    private String caption;
 
     @Column(name = "sort_order", nullable = false)
     private int order;
 
     @Builder
-    private Chapter(Book book, String title, int order) {
-        this.book = book;
-        this.title = title;
+    private RecordImage(Record record, String url, String caption, int order) {
+        this.record = record;
+        this.url = url;
+        this.caption = caption;
         this.order = order;
-    }
-
-    public void update(String title, String note, Integer order) {
-        if (title != null) this.title = title;
-        if (note != null) this.note = note;
-        if (order != null) this.order = order;
     }
 }
