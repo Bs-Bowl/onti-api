@@ -40,6 +40,8 @@ public class Record extends BaseEntity {
     @Column(nullable = false)
     private RecordType type;
 
+    private String title;
+
     @Column(length = 4000)
     private String content;
 
@@ -53,10 +55,11 @@ public class Record extends BaseEntity {
     private int order;
 
     @Builder
-    private Record(Book book, RecordType type, String content, String mediaUrl, String memo,
+    private Record(Book book, RecordType type, String title, String content, String mediaUrl, String memo,
                     LocalDateTime recordedAt, int order) {
         this.book = book;
         this.type = type;
+        this.title = title;
         this.content = content;
         this.mediaUrl = mediaUrl;
         this.memo = memo;
@@ -64,7 +67,8 @@ public class Record extends BaseEntity {
         this.order = order;
     }
 
-    public void update(String content, String mediaUrl, String memo, LocalDateTime recordedAt, Integer order) {
+    public void update(String title, String content, String mediaUrl, String memo, LocalDateTime recordedAt, Integer order) {
+        if (title != null) this.title = title;
         if (content != null) this.content = content;
         if (mediaUrl != null) this.mediaUrl = mediaUrl;
         if (memo != null) this.memo = memo;

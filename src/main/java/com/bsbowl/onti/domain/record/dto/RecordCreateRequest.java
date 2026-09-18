@@ -5,6 +5,6 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
-public record RecordCreateRequest(@NotNull RecordType type, String content, String mediaUrl, String memo,
-                                   LocalDateTime recordedAt) {
+public record RecordCreateRequest(@NotNull RecordType type, String title, String content, String mediaUrl,
+                                   String memo, LocalDateTime recordedAt) {
 }
