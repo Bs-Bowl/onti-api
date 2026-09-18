@@ -61,4 +61,22 @@ class SectionServiceTest {
         assertThat(response.status()).isEqualTo(SectionStatus.DRAFTING);
         assertThat(response.body()).isEqualTo("본문 내용");
     }
+
+    @Test
+    void update_explicitStatus_movesThroughReviewStates() {
+        User user = User.builder().email("a@onti.com").password("x").name("a").build();
+        Book book = Book.builder().user(user).title("책").build();
+        Chapter chapter = Chapter.builder().book(book).title("1장").order(0).build();
+        Section section = Section.builder().chapter(chapter).title("소제목").order(0).build();
+        when(sectionRepository.findById("section-1")).thenReturn(Optional.of(section));
+        when(chapterService.getOwnedChapter(any(), any())).thenReturn(chapter);
+
+        var draftComplete = sectionService.update("section-1", "user-1",
+                new SectionUpdateRequest(null, null, SectionStatus.DRAFT_COMPLETE, null));
+        assertThat(draftComplete.status()).isEqualTo(SectionStatus.DRAFT_COMPLETE);
+
+        var reviewing = sectionService.update("section-1", "user-1",
+                new SectionUpdateRequest(null, null, SectionStatus.REVIEWING, null));
+        assertThat(reviewing.status()).isEqualTo(SectionStatus.REVIEWING);
+    }
 }

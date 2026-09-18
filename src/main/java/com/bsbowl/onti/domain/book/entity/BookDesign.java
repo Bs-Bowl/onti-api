@@ -5,6 +5,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -41,6 +42,13 @@ public class BookDesign extends BaseEntity {
 
     private String pdfUrl;
 
+    /** 표지/내지/책등/뒤표지/타이틀·목차·저자·저작권 페이지 전체 설정(프론트
+     * BookDesignSettings)을 그대로 직렬화한 JSON — 프론트가 자유 레이어 배치까지
+     * 지원해서 필드마다 컬럼을 두기엔 너무 커, Section.body와 같은 방식으로
+     * 통째로 저장한다. */
+    @Lob
+    private String designJson;
+
     @Builder
     private BookDesign(Book book, String coverTemplate, String coverColor, String coverImageUrl,
                         String fontFamily, String layoutPreset) {
@@ -53,11 +61,12 @@ public class BookDesign extends BaseEntity {
     }
 
     public void update(String coverTemplate, String coverColor, String coverImageUrl,
-                        String fontFamily, String layoutPreset) {
+                        String fontFamily, String layoutPreset, String designJson) {
         if (coverTemplate != null) this.coverTemplate = coverTemplate;
         if (coverColor != null) this.coverColor = coverColor;
         if (coverImageUrl != null) this.coverImageUrl = coverImageUrl;
         if (fontFamily != null) this.fontFamily = fontFamily;
         if (layoutPreset != null) this.layoutPreset = layoutPreset;
+        if (designJson != null) this.designJson = designJson;
     }
 }

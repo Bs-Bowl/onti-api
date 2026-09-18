@@ -36,10 +36,11 @@ class BookDesignServiceTest {
         when(bookDesignRepository.save(any(BookDesign.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         var response = bookDesignService.upsert("book-1", "user-1",
-                new BookDesignRequest("classic", "#111111", null, "Pretendard", "editorial"));
+                new BookDesignRequest("classic", "#111111", null, "Pretendard", "editorial", "{\"cover\":{}}"));
 
         assertThat(response.coverTemplate()).isEqualTo("classic");
         assertThat(response.coverColor()).isEqualTo("#111111");
+        assertThat(response.designJson()).isEqualTo("{\"cover\":{}}");
     }
 
     @Test
@@ -51,7 +52,7 @@ class BookDesignServiceTest {
         when(bookDesignRepository.findByBookId("book-1")).thenReturn(Optional.of(existing));
 
         var response = bookDesignService.upsert("book-1", "user-1",
-                new BookDesignRequest(null, "#222222", null, null, null));
+                new BookDesignRequest(null, "#222222", null, null, null, null));
 
         assertThat(response.coverColor()).isEqualTo("#222222");
         assertThat(response.coverTemplate()).isEqualTo("default");
