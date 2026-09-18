@@ -25,6 +25,7 @@ replay_pid*
 
 # Claude
 CLAUDE.md
+.claude/
 .superpowers/
 
 # Gradle
@@ -43,3 +44,6 @@ HELP.md
 # Secrets
 application-local.yml
 .env
+
+# 업로드된 이미지 (로컬 디스크 저장 — 운영에서는 S3)
+uploads/
