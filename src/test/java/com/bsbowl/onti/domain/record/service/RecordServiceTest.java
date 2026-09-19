@@ -63,6 +63,22 @@ class RecordServiceTest {
     }
 
     @Test
+    void get_returnsRecordWithImages() {
+        User user = User.builder().email("a@onti.com").password("x").name("a").build();
+        Book book = Book.builder().user(user).title("책").build();
+        Record record = Record.builder().book(book).type(RecordType.MEMO).title("제목").content("내용").order(0).build();
+        ReflectionTestUtils.setField(record, "id", "record-1");
+        when(recordRepository.findById("record-1")).thenReturn(Optional.of(record));
+        when(bookService.getOwnedBook(any(), any())).thenReturn(book);
+        when(recordImageRepository.findAllByRecordIdOrderByOrderAsc("record-1")).thenReturn(Collections.emptyList());
+
+        var response = recordService.get("record-1", "user-1");
+
+        assertThat(response.title()).isEqualTo("제목");
+        assertThat(response.images()).isEmpty();
+    }
+
+    @Test
     void update_notFound_throwsRecordNotFound() {
         when(recordRepository.findById("missing")).thenReturn(Optional.empty());
 

@@ -43,6 +43,12 @@ public class RecordController {
         return ResponseEntity.ok(ApiResponse.success(recordService.list(bookId, userId)));
     }
 
+    @GetMapping("/api/records/{recordId}")
+    public ResponseEntity<ApiResponse<RecordResponse>> get(@AuthenticationPrincipal String userId,
+                                                             @PathVariable String recordId) {
+        return ResponseEntity.ok(ApiResponse.success(recordService.get(recordId, userId)));
+    }
+
     @PatchMapping("/api/records/{recordId}")
     public ResponseEntity<ApiResponse<RecordResponse>> update(@AuthenticationPrincipal String userId,
                                                                 @PathVariable String recordId,

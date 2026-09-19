@@ -62,6 +62,10 @@ public class RecordService {
                 .toList();
     }
 
+    public RecordResponse get(String recordId, String userId) {
+        return toResponse(getOwnedRecord(recordId, userId));
+    }
+
     @Transactional
     public RecordResponse update(String recordId, String userId, RecordUpdateRequest request) {
         Record record = getOwnedRecord(recordId, userId);
