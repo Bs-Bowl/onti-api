@@ -4,11 +4,12 @@ import com.bsbowl.onti.domain.record.entity.RecordType;
 import com.bsbowl.onti.domain.space.entity.SpaceRecord;
 import com.bsbowl.onti.domain.space.entity.SpaceVisibility;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public record SpaceRecordResponse(String id, String spaceId, RecordType type, String title, String content,
                                    String authorParticipantId, String answeredQuestionId, SpaceVisibility visibility,
-                                   String occurredAt, List<SpaceRecordImageResponse> images) {
+                                   String occurredAt, List<SpaceRecordImageResponse> images, LocalDateTime createdAt) {
     public static SpaceRecordResponse from(SpaceRecord record, List<SpaceRecordImageResponse> images) {
         return new SpaceRecordResponse(
                 record.getId(),
@@ -20,7 +21,8 @@ public record SpaceRecordResponse(String id, String spaceId, RecordType type, St
                 record.getAnsweredQuestion() != null ? record.getAnsweredQuestion().getId() : null,
                 record.getVisibility(),
                 record.getOccurredAt(),
-                images
+                images,
+                record.getCreatedAt()
         );
     }
 }

@@ -7,10 +7,11 @@ import com.bsbowl.onti.domain.space.entity.ParticipantStatus;
 import java.time.LocalDateTime;
 
 public record ParticipantResponse(String id, String spaceId, String displayName, String email, ParticipantRole role,
-                                   ParticipantStatus status, LocalDateTime joinedAt, String photoUrl) {
+                                   ParticipantStatus status, LocalDateTime joinedAt, String photoUrl,
+                                   LocalDateTime createdAt) {
     public static ParticipantResponse from(Participant participant) {
         return new ParticipantResponse(participant.getId(), participant.getSpace().getId(), participant.getDisplayName(),
                 participant.getEmail(), participant.getRole(), participant.getStatus(), participant.getJoinedAt(),
-                participant.getPhotoUrl());
+                participant.getPhotoUrl(), participant.getCreatedAt());
     }
 }
